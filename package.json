@@ -1,19 +1,39 @@
 {
   "name": "svelte-app",
+  "description": "none",
+  "author": {
+    "name": "allworldg"
+  },
   "version": "1.0.0",
   "private": true,
-  "main":"./electron/electron.cjs",
+  "main": "./electron/electron.cjs",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "electron ."
   },
+  "build": {
+    "appId": "tomato",
+    "win": {
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-terser": "^0.4.0",
     "electron": "^26.0.0",
+    "electron-builder": "^24.6.3",
     "rollup": "^3.15.0",
     "rollup-plugin-css-only": "^4.3.0",
     "rollup-plugin-livereload": "^2.0.0",
