@@ -9,9 +9,10 @@
   "main": "./electron/electron.cjs",
   "type": "module",
   "scripts": {
+    "package": "npm run build && electron-builder",
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "electron ."
+    "start": "npm run build && electron ."
   },
   "build": {
     "appId": "tomato",
