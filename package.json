@@ -12,7 +12,7 @@
     "package": "npm run build && electron-builder",
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "npm run build && electron ."
+    "start": "set NODE_ENV=dev && npm run build && electron ."
   },
   "build": {
     "appId": "tomato",
