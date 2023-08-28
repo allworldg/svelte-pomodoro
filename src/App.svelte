@@ -1,6 +1,6 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { sleep, isNumeric } from "./utils.js";
+	import { sleep, isValid, setCookie, getCookie } from "./utils.js";
 	let seconds = 0;
 	let tomatoes = "0";
 	let rests = "0";
@@ -13,7 +13,22 @@
 			await sleep(1);
 		}
 	}
-	function checkNumeric() {}
+	async function checkAndSave() {
+		if (!isValid(tomatoes) || !isValid(rests) || !isValid(cycles)) {
+			console.log("not valid");
+			let obj = await getCookie();
+			obj = JSON.parse(obj[0].value);
+			tomatoes = obj.tomatoes;
+			cycles = obj.cycles;
+			rests = obj.rests;
+		} else {
+			console.log("valid");
+			tomatoes = parseInt(tomatoes).toString();
+			rests = parseInt(rests).toString();
+			cycles = parseInt(cycles).toString();
+			setCookie({ tomatoes, rests, cycles });
+		}
+	}
 </script>
 
 <main>
@@ -32,6 +47,7 @@
 						<span>番茄</span>
 						<input
 							bind:value={tomatoes}
+							on:change={checkAndSave}
 							type="text"
 							min="0"
 							max="10"
@@ -42,6 +58,7 @@
 						<span>休息</span>
 						<input
 							bind:value={rests}
+							on:change={checkAndSave}
 							type="text"
 							placeholder="x"
 						/><span>分钟</span>
@@ -50,6 +67,7 @@
 						<span>循环</span>
 						<input
 							bind:value={cycles}
+							on:change={checkAndSave}
 							type="text"
 							placeholder="x"
 						/><span>分钟</span>
