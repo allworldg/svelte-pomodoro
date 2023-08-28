@@ -39,7 +39,11 @@ function getCookie() {
 
 app.whenReady().then(() => {
     createWindow()
-    
+    getCookie().then(cookie => {
+        if (cookie.length == 0) {
+            setCookie({ 'tomatoes': '0', 'rests': '0', 'cycles': '0' })
+        }
+    })
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })

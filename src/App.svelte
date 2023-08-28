@@ -1,6 +1,7 @@
 <script>
 	import Panel from "./Panel.svelte";
 	import { sleep, isValid, setCookie, getCookie } from "./utils.js";
+	import { onMount } from "svelte";
 	let seconds = 0;
 	let tomatoes = "0";
 	let rests = "0";
@@ -17,7 +18,7 @@
 		if (!isValid(tomatoes) || !isValid(rests) || !isValid(cycles)) {
 			console.log("number not valid");
 			let obj = await getCookie();
-			if (obj.length==0) {
+			if (obj.length == 0) {
 				tomatoes = "0";
 				rests = "0";
 				cycles = "0";
@@ -36,6 +37,13 @@
 			setCookie({ tomatoes, rests, cycles });
 		}
 	}
+	onMount(async () => {
+		let obj = await getCookie();
+		obj = JSON.parse(obj[0].value);
+		tomatoes = obj.tomatoes;
+		rests = obj.rests;
+		cycles = obj.cycles;
+	});
 </script>
 
 <main>
