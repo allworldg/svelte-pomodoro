@@ -6,6 +6,8 @@
 	let tomatoes = "0";
 	let rests = "0";
 	let cycles = "0";
+	let isStarted = 0;
+	$: btn_name = isStarted == 0 ? "开始" : "停止";
 	$: minutes = Math.floor(seconds / 60);
 	async function StartCountDown() {
 		seconds = tomatoes * 60;
@@ -54,7 +56,7 @@
 		<table>
 			<tbody>
 				<tr>
-					<button on:click={StartCountDown}>开始/停止</button>
+					<button on:click={StartCountDown}>{btn_name}</button>
 					<div>当前第x个/总共y个</div>
 				</tr>
 				<tr>
