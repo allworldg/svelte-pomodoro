@@ -11,8 +11,8 @@
   "scripts": {
     "package": "npm run build && electron-builder",
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "set NODE_ENV=dev && npm run build && electron ."
+    "devv": "rollup -c -w",
+    "dev": "set NODE_ENV=dev && npm run build && electron ."
   },
   "build": {
     "appId": "tomato",

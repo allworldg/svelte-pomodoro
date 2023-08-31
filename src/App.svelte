@@ -1,21 +1,43 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { sleep, isValid, setCookie, getCookie } from "./utils.js";
+	import { isValid, setCookie, getCookie } from "./utils.js";
 	import { onMount } from "svelte";
-	let seconds = 0;
 	let tomatoes = "0";
 	let rests = "0";
 	let cycles = "0";
-	let isStarted = 0;
-	$: btn_name = isStarted == 0 ? "开始" : "停止";
-	$: minutes = Math.floor(seconds / 60);
-	async function StartCountDown() {
-		seconds = tomatoes * 60;
-		while (seconds > 0) {
-			seconds--;
-			await sleep(1);
+	let isStarted = 1;
+	let timeId;
+	let ten_msecs = 0;
+	// let seconds = 0;
+	// let minutes = 0;
+	$: btn_name = isStarted == 1 ? "开始" : "停止";
+	$: ms = ten_msecs % 100;
+	$: seconds = ((ten_msecs % 6000) - ms) / 100;
+	$: minutes = (ten_msecs - seconds * 100 - ms) / 6000;
+	$: console.log(seconds)
+	function startOrStop() {
+		if (isStarted == 1) {
+			ten_msecs = tomatoes * 60 * 100;
+			if (!timeId) timeId = setInterval(countDown, 10);
+			isStarted = 0;
+		} else {
+			isStarted = 1;
+			ten_msecs = 0;
+			timeId = clearInterval(timeId);
 		}
 	}
+	function countDown() {
+		if (ten_msecs > 0) {
+			ten_msecs--;
+			// let ms = ten_msecs % 100;
+			// seconds = ((ten_msecs % 6000) - ms) / 100;
+			// minutes = (ten_msecs - seconds * 100 - ms) / 6000;
+		} else {
+			timeId = clearInterval(timeId);
+			isStarted = 1;
+		}
+	}
+
 	async function checkAndSave() {
 		if (!isValid(tomatoes) || !isValid(rests) || !isValid(cycles)) {
 			console.log("number not valid");
@@ -56,7 +78,7 @@
 		<table>
 			<tbody>
 				<tr>
-					<button on:click={StartCountDown}>{btn_name}</button>
+					<button on:click={startOrStop}>{btn_name}</button>
 					<div>当前第x个/总共y个</div>
 				</tr>
 				<tr>
