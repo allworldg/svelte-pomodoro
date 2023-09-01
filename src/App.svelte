@@ -8,13 +8,10 @@
 	let isStarted = 1;
 	let timeId;
 	let ten_msecs = 0;
-	// let seconds = 0;
-	// let minutes = 0;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 	$: ms = ten_msecs % 100;
 	$: seconds = ((ten_msecs % 6000) - ms) / 100;
 	$: minutes = (ten_msecs - seconds * 100 - ms) / 6000;
-	$: console.log(seconds)
 	function startOrStop() {
 		if (isStarted == 1) {
 			ten_msecs = tomatoes * 60 * 100;
@@ -29,9 +26,6 @@
 	function countDown() {
 		if (ten_msecs > 0) {
 			ten_msecs--;
-			// let ms = ten_msecs % 100;
-			// seconds = ((ten_msecs % 6000) - ms) / 100;
-			// minutes = (ten_msecs - seconds * 100 - ms) / 6000;
 		} else {
 			timeId = clearInterval(timeId);
 			isStarted = 1;
