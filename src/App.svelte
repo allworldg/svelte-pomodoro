@@ -5,31 +5,51 @@
 	let tomatoes = "0";
 	let rests = "0";
 	let cycles = "0";
+	let endTime;
+	let minutes = 0;
+	let seconds = 0;
 	let isStarted = 1;
 	let timeId;
-	let ten_msecs = 0;
+	let interval = 1000;
+	let expected_time;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
-	$: ms = ten_msecs % 100;
-	$: seconds = ((ten_msecs % 6000) - ms) / 100;
-	$: minutes = (ten_msecs - seconds * 100 - ms) / 6000;
 	function startOrStop() {
-		if (isStarted == 1) {
-			ten_msecs = tomatoes * 60 * 100;
-			if (!timeId) timeId = setInterval(countDown, 10);
-			isStarted = 0;
-		} else {
+		if (isStarted == 0) {
+			//stop
 			isStarted = 1;
-			ten_msecs = 0;
-			timeId = clearInterval(timeId);
+			timeId = clearTimeout(timeId);
+			minutes = 0;
+			seconds = 0;
+		} else {
+			//start
+			isStarted = 0;
+			let now_time = new Date();
+			console.log(now_time.toLocaleString());
+			expected_time = now_time.getTime() + interval;
+			now_time.setMinutes(now_time.getMinutes() + parseInt(tomatoes));
+			endTime = now_time.getTime();
+			setTimeout(() => {
+				countDown();
+			}, 100);
 		}
 	}
+
 	function countDown() {
-		if (ten_msecs > 0) {
-			ten_msecs--;
-		} else {
-			timeId = clearInterval(timeId);
+		let now = new Date().getTime();
+		let remain_seconds = (endTime - now) / 1000;
+		if (remain_seconds <= 0) {
+			timeId = clearTimeout(timeId);
+			minutes = 0;
+			seconds = 0;
 			isStarted = 1;
+			console.log(new Date().toLocaleString());
+			return;
 		}
+		seconds = parseInt((remain_seconds % 60) + "");
+		minutes = parseInt(remain_seconds / 60 + "");
+		timeId = setTimeout(() => {
+			countDown();
+		}, 100);
 	}
 
 	async function checkAndSave() {
