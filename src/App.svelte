@@ -9,19 +9,23 @@
 	let minutes = 0;
 	let seconds = 0;
 	let isStarted = 1;
-	let timeId;
 	let interval = 1000;
 	let expected_time;
+	let myWorker;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 	function startOrStop() {
+		if (!window.Worker) {
+			console.log("your browser version not support this app");
+		}
 		if (isStarted == 0) {
 			//stop
 			isStarted = 1;
-			timeId = clearTimeout(timeId);
 			minutes = 0;
 			seconds = 0;
 		} else {
 			//start
+			myWorker = new Worker("worker.js");
+			myWorker.postMessage("start");
 			isStarted = 0;
 			let now_time = new Date();
 			console.log(now_time.toLocaleString());
@@ -38,7 +42,6 @@
 		let now = new Date().getTime();
 		let remain_seconds = (endTime - now) / 1000;
 		if (remain_seconds <= 0) {
-			timeId = clearTimeout(timeId);
 			minutes = 0;
 			seconds = 0;
 			isStarted = 1;
@@ -47,9 +50,6 @@
 		}
 		seconds = parseInt((remain_seconds % 60) + "");
 		minutes = parseInt(remain_seconds / 60 + "");
-		timeId = setTimeout(() => {
-			countDown();
-		}, 100);
 	}
 
 	async function checkAndSave() {
