@@ -1,6 +1,6 @@
 let target_time;
 let timeId;
-let tomatoes;
+let time;
 function countDown() {
     let now = new Date().getTime();
     let remain_seconds = (target_time - now) / 1000;
@@ -15,10 +15,10 @@ function countDown() {
 
 }
 onmessage = (message) => {
-    tomatoes = message.data;
+    time = message.data;
     target_time = new Date();
     console.log(target_time.toLocaleString())
-    target_time.setMinutes(target_time.getMinutes() + tomatoes);
+    target_time.setMinutes(target_time.getMinutes() + time);
     setTimeout(() => {
         countDown()
     }, 10);

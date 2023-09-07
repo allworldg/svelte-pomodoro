@@ -8,6 +8,7 @@ function isNumeric(num) {
     return num.trim() != '' && !isNaN(num)
 }
 function isInRange(num) {
+    num = parseInt(num)
     if (num >= 0 && num <= 240) {
         return true;
     } else {

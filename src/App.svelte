@@ -4,10 +4,10 @@
 	import { onMount } from "svelte";
 	let tomatoes = "0";
 	let rests = "0";
-	let cycles = "0";
-	let endTime;
+	let cycles = "1";
 	let minutes = 0;
 	let seconds = 0;
+	let status = 0;
 	let isStarted = 1;
 	let myWorker;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
@@ -41,13 +41,18 @@
 	}
 
 	async function checkAndSave() {
-		if (!isValid(tomatoes) || !isValid(rests) || !isValid(cycles)) {
+		if (
+			!isValid(tomatoes) ||
+			!isValid(rests) ||
+			!isValid(cycles) ||
+			parseInt(cycles) < 1
+		) {
 			console.log("number not valid");
 			let obj = await getCookie();
 			if (obj.length == 0) {
 				tomatoes = "0";
 				rests = "0";
-				cycles = "0";
+				cycles = "1";
 				setCookie({ tomatoes, rests, cycles });
 			} else {
 				obj = JSON.parse(obj[0].value);
