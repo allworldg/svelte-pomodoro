@@ -9,47 +9,35 @@
 	let minutes = 0;
 	let seconds = 0;
 	let isStarted = 1;
-	let interval = 1000;
-	let expected_time;
 	let myWorker;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 	function startOrStop() {
 		if (!window.Worker) {
 			console.log("your browser version not support this app");
+			return;
 		}
 		if (isStarted == 0) {
 			//stop
+			myWorker.terminate();
 			isStarted = 1;
 			minutes = 0;
 			seconds = 0;
+			console.log(new Date().toLocaleString());
 		} else {
 			//start
-			myWorker = new Worker("worker.js");
-			myWorker.postMessage("start");
+			myWorker = new Worker("../src/worker.js");
 			isStarted = 0;
-			let now_time = new Date();
-			console.log(now_time.toLocaleString());
-			expected_time = now_time.getTime() + interval;
-			now_time.setMinutes(now_time.getMinutes() + parseInt(tomatoes));
-			endTime = now_time.getTime();
-			setTimeout(() => {
-				countDown();
-			}, 100);
+			myWorker.postMessage(parseInt(tomatoes));
+			myWorker.onmessage = (message) => {
+				if (message.data == "terminate") {
+					startOrStop();
+				} else {
+					let remain_seconds = message.data;
+					seconds = parseInt((remain_seconds % 60) + "");
+					minutes = parseInt(remain_seconds / 60 + "");
+				}
+			};
 		}
-	}
-
-	function countDown() {
-		let now = new Date().getTime();
-		let remain_seconds = (endTime - now) / 1000;
-		if (remain_seconds <= 0) {
-			minutes = 0;
-			seconds = 0;
-			isStarted = 1;
-			console.log(new Date().toLocaleString());
-			return;
-		}
-		seconds = parseInt((remain_seconds % 60) + "");
-		minutes = parseInt(remain_seconds / 60 + "");
 	}
 
 	async function checkAndSave() {
