@@ -41,7 +41,7 @@ app.whenReady().then(() => {
     createWindow()
     getCookie().then(cookie => {
         if (cookie.length == 0) {
-            setCookie({ 'tomatoes': '0', 'rests': '0', 'cycles': '1' })
+            setCookie({ 'tomatoes': '1', 'rests': '0', 'cycles': '1' })
         }
     })
     app.on('activate', () => {

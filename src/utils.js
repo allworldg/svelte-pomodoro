@@ -1,15 +1,15 @@
 
-function isValid(num) {
-    return isNumeric(num) && isInRange(num)
+function isValid(num, min, max) {
+    return isNumeric(num) && isInRange(num, min, max)
 }
 
 function isNumeric(num) {
     if (typeof (num) != 'string') return false;
     return num.trim() != '' && !isNaN(num)
 }
-function isInRange(num) {
+function isInRange(num, min, max) {
     num = parseInt(num)
-    if (num >= 0 && num <= 240) {
+    if (num >= min && num <= max) {
         return true;
     } else {
         return false;

@@ -2,55 +2,35 @@
 	import Panel from "./Panel.svelte";
 	import { isValid, setCookie, getCookie } from "./utils.js";
 	import { onMount } from "svelte";
-	let tomatoes = "0";
+	let tomatoes = "1";
 	let rests = "0";
 	let cycles = "1";
 	let minutes = 0;
 	let seconds = 0;
-	let status = 0;
 	let isStarted = 1;
 	let myWorker;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
+
 	function startOrStop() {
-		if (!window.Worker) {
-			console.log("your browser version not support this app");
-			return;
-		}
-		if (isStarted == 0) {
-			//stop
-			myWorker.terminate();
-			isStarted = 1;
-			minutes = 0;
-			seconds = 0;
-			console.log(new Date().toLocaleString());
-		} else {
-			//start
-			myWorker = new Worker("../src/worker.js");
+		if (isStarted == 1) {
+			myWorker = new Worker("./worker.js");
 			isStarted = 0;
-			myWorker.postMessage(parseInt(tomatoes));
-			myWorker.onmessage = (message) => {
-				if (message.data == "terminate") {
-					startOrStop();
-				} else {
-					let remain_seconds = message.data;
-					seconds = parseInt((remain_seconds % 60) + "");
-					minutes = parseInt(remain_seconds / 60 + "");
-				}
-			};
+		} else {
+			isStarted = 1;
+			myWorker.terminate();
 		}
 	}
 
 	async function checkAndSave() {
 		if (
-			!isValid(tomatoes) ||
-			!isValid(rests) ||
-			!isValid(cycles) ||
-			parseInt(cycles) < 1
+			!isValid(tomatoes, 1, 240) ||
+			!isValid(rests, 0, 240) ||
+			!isValid(cycles, 1, 100)
 		) {
 			console.log("number not valid");
 			let obj = await getCookie();
 			if (obj.length == 0) {
-				tomatoes = "0";
+				tomatoes = "1";
 				rests = "0";
 				cycles = "1";
 				setCookie({ tomatoes, rests, cycles });
