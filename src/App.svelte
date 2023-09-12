@@ -10,7 +10,7 @@
 	let isStarted = 1;
 	let myWorker;
 	const TERMINATE = 1;
-	const RUNNING = 0;
+	const NOTIFICATION = 2;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
