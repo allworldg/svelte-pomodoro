@@ -1,6 +1,6 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { isValid, setCookie, getCookie } from "./utils.js";
+	import { isValid, setCookie, getCookie ,notification} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
 	let rests = "0";
@@ -9,6 +9,7 @@
 	let seconds = 0;
 	let isStarted = 1;
 	let myWorker;
+	const RUNNING = 0;
 	const TERMINATE = 1;
 	const NOTIFICATION = 2;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
@@ -29,10 +30,13 @@
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
-				} else {
+				} else if (e.data.status == RUNNING) {
 					let remain_seconds = e.data.remain_seconds;
 					minutes = Math.floor(remain_seconds / 60);
 					seconds = Math.floor(remain_seconds % 60);
+				} else if (e.data.status == NOTIFICATION){
+					notification(e.data.notification.message)
+
 				}
 			};
 		} else {

@@ -7,8 +7,9 @@ const NOTIFICATION_TYPE = {
     end: { type: 1, message: "结束" },
     ready_tomato: { type: 2, message: "开始专注" }
 }
-const TERMINATE = 1;
 const RUNNING = 0;
+const TERMINATE = 1;
+const NOTIFICATION = 2;
 let timer;
 onmessage = (e) => {
     let data = e.data;
@@ -75,14 +76,14 @@ class Timer {
     notification() {
         if (this.status == STATUS.TOMATO) {
             if (this.rests > 0) {
-                self.postMessage(NOTIFICATION_TYPE.ready_rest)
+                self.postMessage({ notification: NOTIFICATION_TYPE.ready_rest, status: NOTIFICATION })
             }
         } else {
             //rest
             if (this.cycles == 0) {
-                self.postMessage(NOTIFICATION_TYPE.end)
+                self.postMessage({ notification: NOTIFICATION_TYPE.end, status: NOTIFICATION })
             } else {
-                self.postMessage(NOTIFICATION_TYPE.ready_tomato)
+                self.postMessage({ notification: NOTIFICATION_TYPE.ready_tomato, status: NOTIFICATION })
             }
         }
     }

@@ -50,6 +50,10 @@ app.whenReady().then(() => {
     ipcMain.on('set-cookie', (event, cookie) => {
         setCookie(cookie)
     })
+    ipcMain.on('notification', (e, message) => {
+        console.log("ipcmain notification")
+        new Notification({ title: "no title", body: message }).show()
+    })
     ipcMain.handle('get-cookie', getCookie)
     // ipcMain.handle('')
 })
