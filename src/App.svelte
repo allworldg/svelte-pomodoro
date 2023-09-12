@@ -9,15 +9,37 @@
 	let seconds = 0;
 	let isStarted = 1;
 	let myWorker;
+	const TERMINATE = 1;
+	const RUNNING = 0;
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
 		if (isStarted == 1) {
-			myWorker = new Worker("./worker.js");
 			isStarted = 0;
+			myWorker = new Worker("./worker.js");
+			myWorker.postMessage({
+				tomatoes,
+				rests,
+				cycles,
+				status: 0,
+			});
+			myWorker.onmessage = (e) => {
+				if (e.data.status == TERMINATE) {
+					isStarted = 1;
+					minutes = 0;
+					seconds = 0;
+					myWorker.terminate();
+				} else {
+					let remain_seconds = e.data.remain_seconds;
+					minutes = Math.floor(remain_seconds / 60);
+					seconds = Math.floor(remain_seconds % 60);
+				}
+			};
 		} else {
 			isStarted = 1;
 			myWorker.terminate();
+			minutes = 0;
+			seconds = 0;
 		}
 	}
 
@@ -96,7 +118,7 @@
 							on:change={checkAndSave}
 							type="text"
 							placeholder="x"
-						/><span>分钟</span>
+						/><span>次</span>
 					</div>
 				</tr>
 				<tr>
