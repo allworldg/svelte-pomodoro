@@ -10,6 +10,7 @@ const NOTIFICATION_TYPE = {
 const RUNNING = 0;
 const TERMINATE = 1;
 const NOTIFICATION = 2;
+const PLAY_AUDIO = 3;
 let timer;
 onmessage = (e) => {
     let data = e.data;
@@ -30,17 +31,14 @@ class Timer {
     start() {
         let now = new Date();
         if (this.status == STATUS.TOMATO) {
-            console.log("start tomatoes")
             now.setMinutes(now.getMinutes() + this.tomatoes);
         } else if (this.status == STATUS.REST) {
             now.setMinutes(now.getMinutes() + this.rests)
-            console.log("start rest")
         }
-        console.log(now.toLocaleString())
         this.target_time = now
         setTimeout(() => {
             this.main_process()
-        }, 100);
+        }, 10);
     }
     getRemainTime() {
         let now = new Date();
@@ -51,7 +49,6 @@ class Timer {
         let remain_time = this.getRemainTime();
         if (remain_time <= 0) {
             this.stop();
-            console.log("end time :" + new Date().toLocaleString())
             if (this.status == STATUS.TOMATO) {
                 this.cycles--;
             }
@@ -67,7 +64,7 @@ class Timer {
             this.sendTime(remain_time / 1000);
             this.timeId = setTimeout(() => {
                 this.main_process();
-            }, 100);
+            }, 500);
         }
     }
     stop() {

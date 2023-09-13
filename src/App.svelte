@@ -1,6 +1,6 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { isValid, setCookie, getCookie ,notification} from "./utils.js";
+	import { isValid, setCookie, getCookie, notification } from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
 	let rests = "0";
@@ -34,9 +34,8 @@
 					let remain_seconds = e.data.remain_seconds;
 					minutes = Math.floor(remain_seconds / 60);
 					seconds = Math.floor(remain_seconds % 60);
-				} else if (e.data.status == NOTIFICATION){
-					notification(e.data.notification.message)
-
+				} else if (e.data.status == NOTIFICATION) {
+					notification(e.data.notification.message);
 				}
 			};
 		} else {
