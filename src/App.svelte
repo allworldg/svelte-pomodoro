@@ -9,9 +9,14 @@
 	let seconds = 0;
 	let isStarted = 1;
 	let myWorker;
+	let runningTitle = "";
 	const RUNNING = 0;
 	const TERMINATE = 1;
 	const NOTIFICATION = 2;
+	const RUNNING_STATUS = {
+		TOMATO: 1,
+		REST: 2,
+	};
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
@@ -30,8 +35,14 @@
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
+					runningTitle = "";
 				} else if (e.data.status == RUNNING) {
 					let remain_seconds = e.data.remain_seconds;
+					if(e.data.running_status==RUNNING_STATUS.TOMATO){
+						runningTitle = "开始专注"
+					}else if(e.data.running_status==RUNNING_STATUS.REST){
+						runningTitle = "开始休息"
+					}
 					minutes = Math.floor(remain_seconds / 60);
 					seconds = Math.floor(remain_seconds % 60);
 				} else if (e.data.status == NOTIFICATION) {
@@ -43,6 +54,7 @@
 			myWorker.terminate();
 			minutes = 0;
 			seconds = 0;
+			runningTitle = ""
 		}
 	}
 
@@ -84,7 +96,7 @@
 
 <main>
 	<div>
-		<Panel {minutes} {seconds} />
+		<Panel {minutes} {seconds}{runningTitle} />
 	</div>
 	<div>
 		<table>

@@ -1,4 +1,4 @@
-const STATUS = {
+const RUNNING_STATUS = {
     TOMATO: 1,
     REST: 2,
 }
@@ -22,17 +22,42 @@ onmessage = (e) => {
 class Timer {
     constructor(tomatoes, rests, cycles) {
         this.timeId = undefined;
-        this.status = STATUS.TOMATO;
+        this.status = RUNNING_STATUS.TOMATO;
         this.tomatoes = tomatoes;
         this.rests = rests;
         this.cycles = cycles;
         this.target_time = undefined;
     }
+    main_process() {
+        let remain_time = this.getRemainTime();
+        if (remain_time <= 10000) {//smaller than 10s
+
+        }
+        if (remain_time <= 0) {
+            this.stop();
+            if (this.status == RUNNING_STATUS.TOMATO) {
+                this.cycles--;
+            }
+            this.notification();
+
+            if (this.status == RUNNING_STATUS.REST && this.cycles == 0) {
+                self.postMessage({ "remain_seconds": 0, 'status': TERMINATE });
+                return;
+            }
+            this.status = this.status == RUNNING_STATUS.TOMATO ? RUNNING_STATUS.REST : RUNNING_STATUS.TOMATO;
+            this.start();
+        } else {
+            this.sendTime(remain_time / 1000);
+            this.timeId = setTimeout(() => {
+                this.main_process();
+            }, 500);
+        }
+    }
     start() {
         let now = new Date();
-        if (this.status == STATUS.TOMATO) {
+        if (this.status == RUNNING_STATUS.TOMATO) {
             now.setMinutes(now.getMinutes() + this.tomatoes);
-        } else if (this.status == STATUS.REST) {
+        } else if (this.status == RUNNING_STATUS.REST) {
             now.setMinutes(now.getMinutes() + this.rests)
         }
         this.target_time = now
@@ -45,33 +70,11 @@ class Timer {
         let remain_time = this.target_time - now;
         return remain_time;
     }
-    main_process() {
-        let remain_time = this.getRemainTime();
-        if (remain_time <= 0) {
-            this.stop();
-            if (this.status == STATUS.TOMATO) {
-                this.cycles--;
-            }
-            this.notification();
-
-            if (this.status == STATUS.REST && this.cycles == 0) {
-                self.postMessage({ "remain_seconds": 0, 'status': TERMINATE });
-                return;
-            }
-            this.status = this.status == STATUS.TOMATO ? STATUS.REST : STATUS.TOMATO;
-            this.start();
-        } else {
-            this.sendTime(remain_time / 1000);
-            this.timeId = setTimeout(() => {
-                this.main_process();
-            }, 500);
-        }
-    }
     stop() {
         clearTimeout(this.timeId)
     }
     notification() {
-        if (this.status == STATUS.TOMATO) {
+        if (this.status == RUNNING_STATUS.TOMATO) {
             if (this.rests > 0) {
                 self.postMessage({ notification: NOTIFICATION_TYPE.ready_rest, status: NOTIFICATION })
             }
@@ -85,6 +88,6 @@ class Timer {
         }
     }
     sendTime(remain_seconds) {
-        postMessage({ "remain_seconds": remain_seconds, status: RUNNING })
+        postMessage({ "remain_seconds": remain_seconds, status: RUNNING, running_status: this.status })
     }
 }

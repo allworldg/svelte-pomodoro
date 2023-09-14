@@ -19,7 +19,7 @@ function isInRange(num, min, max) {
 function setCookie(obj) {
     window.mainAPI.setCookie(obj)
 }
-function notification(message){
+function notification(message) {
     window.mainAPI.notification(message)
 }
 
@@ -27,4 +27,4 @@ async function getCookie() {
     let cookie = await window.mainAPI.getCookie()
     return cookie
 }
-export { isNumeric, isValid, isInRange, setCookie, getCookie,notification }
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification }
