@@ -11,6 +11,7 @@ const RUNNING = 0;
 const TERMINATE = 1;
 const NOTIFICATION = 2;
 const PLAY_AUDIO = 3;
+let isFirstAudio = true;
 let timer;
 onmessage = (e) => {
     let data = e.data;
@@ -30,8 +31,11 @@ class Timer {
     }
     main_process() {
         let remain_time = this.getRemainTime();
-        if (remain_time <= 10000) {//smaller than 10s
-
+        if (remain_time <= 10000) {//10000ms = 10s
+            if (isFirstAudio) {
+                self.postMessage({ isPlayed: true })
+                isFirstAudio = false;
+            }
         }
         if (remain_time <= 0) {
             this.stop();
@@ -72,6 +76,8 @@ class Timer {
     }
     stop() {
         clearTimeout(this.timeId)
+        isFirstAudio = true;
+        postMessage({ isPlayed: false })
     }
     notification() {
         if (this.status == RUNNING_STATUS.TOMATO) {

@@ -10,6 +10,7 @@
 	let isStarted = 1;
 	let myWorker;
 	let runningTitle = "";
+	let audio = new Audio();
 	const RUNNING = 0;
 	const TERMINATE = 1;
 	const NOTIFICATION = 2;
@@ -30,18 +31,35 @@
 				status: 0,
 			});
 			myWorker.onmessage = (e) => {
+				if (e.data.isPlayed != undefined) {
+					if (e.data.isPlayed) {
+						console.log("music ");
+						audio = new Audio("test.m4aa"); //之后写一个路径检查，防止音乐文件不存在
+						audio.onerror = function () {
+							notification(
+								"音乐文件播放失败，检查路径以及文件是否损坏。"
+							);
+						};
+						audio.play();
+					} else {
+						audio.pause();
+						audio.currentTime = 0;
+					}
+				}
 				if (e.data.status == TERMINATE) {
 					isStarted = 1;
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
+					audio.pause();
+					audio.currentTime = 0;
 					runningTitle = "";
 				} else if (e.data.status == RUNNING) {
 					let remain_seconds = e.data.remain_seconds;
-					if(e.data.running_status==RUNNING_STATUS.TOMATO){
-						runningTitle = "开始专注"
-					}else if(e.data.running_status==RUNNING_STATUS.REST){
-						runningTitle = "开始休息"
+					if (e.data.running_status == RUNNING_STATUS.TOMATO) {
+						runningTitle = "正在专注";
+					} else if (e.data.running_status == RUNNING_STATUS.REST) {
+						runningTitle = "正在休息";
 					}
 					minutes = Math.floor(remain_seconds / 60);
 					seconds = Math.floor(remain_seconds % 60);
@@ -54,7 +72,9 @@
 			myWorker.terminate();
 			minutes = 0;
 			seconds = 0;
-			runningTitle = ""
+			runningTitle = "";
+			audio.pause();
+			audio.currentTime = 0;
 		}
 	}
 
@@ -64,7 +84,6 @@
 			!isValid(rests, 0, 240) ||
 			!isValid(cycles, 1, 100)
 		) {
-			console.log("number not valid");
 			let obj = await getCookie();
 			if (obj.length == 0) {
 				tomatoes = "1";
@@ -78,7 +97,6 @@
 				rests = obj.rests;
 			}
 		} else {
-			console.log("number all valid");
 			tomatoes = parseInt(tomatoes).toString();
 			rests = parseInt(rests).toString();
 			cycles = parseInt(cycles).toString();
@@ -96,7 +114,7 @@
 
 <main>
 	<div>
-		<Panel {minutes} {seconds}{runningTitle} />
+		<Panel {minutes} {seconds} {runningTitle} />
 	</div>
 	<div>
 		<table>
