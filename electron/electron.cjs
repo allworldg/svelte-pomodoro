@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, session, Notification } = require('electron')
 const path = require('path')
 const isDev = process.env.NODE_ENV !== 'production'
+
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
