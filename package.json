@@ -9,10 +9,10 @@
   "main": "./electron/electron.cjs",
   "type": "module",
   "scripts": {
-    "package": "set NODE_ENV=production&& npm run build && electron-builder",
+    "package": "npm run build && electron-builder",
     "build": "rollup -c",
     "devv": "rollup -c -w",
-    "dev": "set NODE_ENV=dev&& npm run build && electron ."
+    "dev": "npm run build && electron ."
   },
   "build": {
     "appId": "tomato",
