@@ -1,9 +1,11 @@
-const { app, BrowserWindow, ipcMain, session, Notification } = require('electron')
+const { app, BrowserWindow, ipcMain, session, Notification, Tray, Menu } = require('electron')
 const path = require('path')
 const isDev = !app.isPackaged
+let tray;
+let win
 
 const createWindow = () => {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 800,
         height: 800,
         webPreferences: {
@@ -14,6 +16,24 @@ const createWindow = () => {
         win.webContents.openDevTools();
     }
     win.loadFile(path.join(__dirname, '../public/index.html'))
+    win.on('close', (event) => {
+        event.preventDefault();
+        win.hide();
+    })
+
+    tray = new Tray(path.join(__dirname, "../public/resource/tomato.png"));
+    // tray = new Tray("../public/Tomato.svg"));
+    tray.setToolTip("tomato")
+    const contextMenu = Menu.buildFromTemplate([
+        { label: 'Item1', type: 'radio' },
+        { label: 'Item2', type: 'radio' },
+        { label: 'Item3', type: 'radio', checked: true },
+        { label: 'Item4', type: 'radio' }
+    ])
+    tray.setContextMenu(contextMenu)
+    tray.on('click', () => {
+        win.show();
+    });
 }
 
 function setCookie(obj) {
@@ -42,7 +62,7 @@ app.whenReady().then(() => {
     createWindow()
     getCookie().then(cookie => {
         if (cookie.length == 0) {
-            setCookie({ 'tomatoes': '1', 'rests': '0', 'cycles': '1' })
+            setCookie({ 'tomatoes': '1', 'rests': '0', 'cycles': '1', 'audio_paths': [], 'audio_path': {} })
         }
     })
     app.on('activate', () => {

@@ -11,6 +11,9 @@
 	let myWorker;
 	let runningTitle = "";
 	let audio = new Audio();
+	let audio_paths = [];
+	let audio_path = "";
+	let audio_name = "";
 	const RUNNING = 0;
 	const TERMINATE = 1;
 	const NOTIFICATION = 2;
@@ -33,8 +36,7 @@
 			myWorker.onmessage = (e) => {
 				if (e.data.isPlayed != undefined) {
 					if (e.data.isPlayed) {
-						console.log("music ");
-						audio = new Audio("test.m4aa"); //之后写一个路径检查，防止音乐文件不存在
+						audio = new Audio("forest.mp4"); //之后写一个路径检查，防止音乐文件不存在
 						audio.onerror = function () {
 							notification(
 								"音乐文件播放失败，检查路径以及文件是否损坏。"
@@ -89,12 +91,20 @@
 				tomatoes = "1";
 				rests = "0";
 				cycles = "1";
-				setCookie({ tomatoes, rests, cycles });
+				setCookie({
+					tomatoes,
+					rests,
+					cycles,
+					audio_paths: [],
+					audio_path: "",
+				});
 			} else {
 				obj = JSON.parse(obj[0].value);
 				tomatoes = obj.tomatoes;
 				cycles = obj.cycles;
 				rests = obj.rests;
+				audio_paths = obj.audio_paths;
+				audio_path = obj.audio_path;
 			}
 		} else {
 			tomatoes = parseInt(tomatoes).toString();
@@ -155,7 +165,12 @@
 					</div>
 				</tr>
 				<tr>
+					<select bind:value={audio}
+					>
+						<option />
+					</select>
 					<div><a href="#">点击选择提示音</a></div>
+					<div><a>清除自定义音乐</a></div>
 				</tr>
 			</tbody>
 		</table>
