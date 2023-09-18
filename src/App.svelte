@@ -1,6 +1,12 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { isValid, setCookie, getCookie, notification } from "./utils.js";
+	import {
+		isValid,
+		setCookie,
+		getCookie,
+		notification,
+		setIsStarted,
+	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
 	let rests = "0";
@@ -24,6 +30,7 @@
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
+		setIsStarted();
 		if (isStarted == 1) {
 			isStarted = 0;
 			myWorker = new Worker("./worker.js");
@@ -165,8 +172,7 @@
 					</div>
 				</tr>
 				<tr>
-					<select bind:value={audio}
-					>
+					<select bind:value={audio}>
 						<option />
 					</select>
 					<div><a href="#">点击选择提示音</a></div>

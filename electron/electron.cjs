@@ -3,6 +3,7 @@ const path = require('path')
 const isDev = !app.isPackaged
 let tray;
 let win
+let isStarted = 1;
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -17,8 +18,10 @@ const createWindow = () => {
     }
     win.loadFile(path.join(__dirname, '../public/index.html'))
     win.on('close', (event) => {
-        event.preventDefault();
-        win.hide();
+        if (isStarted == 0) {
+            event.preventDefault();
+            win.hide();
+        }
     })
 
     tray = new Tray(path.join(__dirname, "../public/resource/tomato.png"));
@@ -75,7 +78,9 @@ app.whenReady().then(() => {
         new Notification({ title: "no title", body: message }).show()
     })
     ipcMain.handle('get-cookie', getCookie)
-    // ipcMain.handle('')
+    ipcMain.on('set-isStarted', (e, message) => {
+        isStarted = isStarted == 1 ? 0 : 1
+    })
 })
 app.on('window-all-closed', () => {
     app.quit()
