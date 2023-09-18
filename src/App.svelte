@@ -5,7 +5,7 @@
 		setCookie,
 		getCookie,
 		notification,
-		setIsStarted,
+		sendIsStarted,
 	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
@@ -30,9 +30,9 @@
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
-		setIsStarted();
 		if (isStarted == 1) {
 			isStarted = 0;
+			sendIsStarted(isStarted);
 			myWorker = new Worker("./worker.js");
 			myWorker.postMessage({
 				tomatoes,
@@ -57,6 +57,7 @@
 				}
 				if (e.data.status == TERMINATE) {
 					isStarted = 1;
+					sendIsStarted(isStarted);
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
@@ -78,6 +79,7 @@
 			};
 		} else {
 			isStarted = 1;
+			sendIsStarted(isStarted);
 			myWorker.terminate();
 			minutes = 0;
 			seconds = 0;
@@ -133,7 +135,7 @@
 	<div>
 		<Panel {minutes} {seconds} {runningTitle} />
 	</div>
-	<div>
+	<div style="display: flex">
 		<table>
 			<tbody>
 				<tr>
@@ -141,7 +143,7 @@
 					<div>当前第x个/总共y个</div>
 				</tr>
 				<tr>
-					<div style="display: inline">
+					<div style="display: inline;flex:auto">
 						<span>番茄</span>
 						<input
 							bind:value={tomatoes}
@@ -152,7 +154,7 @@
 							placeholder="x"
 						/><span>分钟;</span>
 					</div>
-					<div style="display: inline">
+					<div style="display: inline; flex:auto">
 						<span>休息</span>
 						<input
 							bind:value={rests}
@@ -161,7 +163,7 @@
 							placeholder="x"
 						/><span>分钟</span>
 					</div>
-					<div style="display: inline">
+					<div style="display: inline; flex:auto">
 						<span>循环</span>
 						<input
 							bind:value={cycles}

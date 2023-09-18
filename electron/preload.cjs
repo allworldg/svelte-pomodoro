@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('mainAPI', {
     notification: (message) => {
         ipcRenderer.send('notification', message)
     },
-    setIsStarted: () => {
-        ipcRenderer.send('set-isStarted', "123")
+    sendIsStarted: (isStarted) => {
+        ipcRenderer.send('set-isStarted', isStarted)
     }
 })

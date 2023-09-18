@@ -4,14 +4,16 @@ const isDev = !app.isPackaged
 let tray;
 let win
 let isStarted = 1;
+app.disableHardwareAcceleration()
 
 const createWindow = () => {
     win = new BrowserWindow({
         width: 800,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, "preload.cjs")
-        }
+            preload: path.join(__dirname, "preload.cjs"),
+        },
+        icon:path.join(__dirname,"../public/resource/tomato.png")
     });
     if (isDev) {
         win.webContents.openDevTools();
@@ -53,7 +55,7 @@ function setCookie(obj) {
 
 }
 function getCookie() {
-    return session.defaultSession.cookies.get({ URL: 'http://localhsot' }).then(cookie => {
+    return session.defaultSession.cookies.get({ URL: 'http://localhost' }).then(cookie => {
         console.log("getCookie is successful");
         return cookie
     }).catch(err => {
@@ -78,8 +80,8 @@ app.whenReady().then(() => {
         new Notification({ title: "no title", body: message }).show()
     })
     ipcMain.handle('get-cookie', getCookie)
-    ipcMain.on('set-isStarted', (e, message) => {
-        isStarted = isStarted == 1 ? 0 : 1
+    ipcMain.on('set-isStarted', (e,message) => {
+        isStarted = message;
     })
 })
 app.on('window-all-closed', () => {

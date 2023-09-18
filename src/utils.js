@@ -27,7 +27,7 @@ async function getCookie() {
     let cookie = await window.mainAPI.getCookie()
     return cookie
 }
-function setIsStarted() {
-    window.mainAPI.setIsStarted();
+function sendIsStarted(message) {
+    window.mainAPI.sendIsStarted(message);
 }
-export { isNumeric, isValid, isInRange, setCookie, getCookie, notification,setIsStarted }
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted }
