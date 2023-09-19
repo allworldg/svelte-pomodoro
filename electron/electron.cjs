@@ -8,12 +8,12 @@ app.disableHardwareAcceleration()
 
 const createWindow = () => {
     win = new BrowserWindow({
-        width: 800,
-        height: 800,
+        width: 600,
+        height: 400,
         webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
         },
-        icon:path.join(__dirname,"../public/resource/tomato.png")
+        icon: path.join(__dirname, "../public/resource/tomato.png")
     });
     if (isDev) {
         win.webContents.openDevTools();
@@ -80,7 +80,7 @@ app.whenReady().then(() => {
         new Notification({ title: "no title", body: message }).show()
     })
     ipcMain.handle('get-cookie', getCookie)
-    ipcMain.on('set-isStarted', (e,message) => {
+    ipcMain.on('set-isStarted', (e, message) => {
         isStarted = message;
     })
 })

@@ -135,7 +135,7 @@
 	<div>
 		<Panel {minutes} {seconds} {runningTitle} />
 	</div>
-	<div style="display: flex">
+	<div style="display: flex;">
 		<table>
 			<tbody>
 				<tr>
