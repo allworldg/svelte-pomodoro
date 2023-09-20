@@ -33,7 +33,7 @@
 		if (isStarted == 1) {
 			isStarted = 0;
 			sendIsStarted(isStarted);
-			myWorker = new Worker("./worker.js");
+			myWorker = new Worker("./src/worker.js");
 			myWorker.postMessage({
 				tomatoes,
 				rests,
