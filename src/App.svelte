@@ -1,74 +1,121 @@
 <script>
 	import Panel from "./Panel.svelte";
-	import { isValid, setCookie, getCookie } from "./utils.js";
+	import {
+		isValid,
+		setCookie,
+		getCookie,
+		notification,
+		sendIsStarted,
+	} from "./utils.js";
 	import { onMount } from "svelte";
-	let tomatoes = "0";
+	let tomatoes = "1";
 	let rests = "0";
-	let cycles = "0";
-	let endTime;
+	let cycles = "1";
 	let minutes = 0;
 	let seconds = 0;
 	let isStarted = 1;
-	let timeId;
-	let interval = 1000;
-	let expected_time;
+	let myWorker;
+	let runningTitle = "";
+	let audio = new Audio();
+	let audio_paths = [];
+	let audio_path = "";
+	let audio_name = "";
+	const RUNNING = 0;
+	const TERMINATE = 1;
+	const NOTIFICATION = 2;
+	const RUNNING_STATUS = {
+		TOMATO: 1,
+		REST: 2,
+	};
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
-	function startOrStop() {
-		if (isStarted == 0) {
-			//stop
-			isStarted = 1;
-			timeId = clearTimeout(timeId);
-			minutes = 0;
-			seconds = 0;
-		} else {
-			//start
-			isStarted = 0;
-			let now_time = new Date();
-			console.log(now_time.toLocaleString());
-			expected_time = now_time.getTime() + interval;
-			now_time.setMinutes(now_time.getMinutes() + parseInt(tomatoes));
-			endTime = now_time.getTime();
-			setTimeout(() => {
-				countDown();
-			}, 100);
-		}
-	}
 
-	function countDown() {
-		let now = new Date().getTime();
-		let remain_seconds = (endTime - now) / 1000;
-		if (remain_seconds <= 0) {
-			timeId = clearTimeout(timeId);
+	function startOrStop() {
+		if (isStarted == 1) {
+			isStarted = 0;
+			sendIsStarted(isStarted);
+			myWorker = new Worker("./src/worker.js");
+			myWorker.postMessage({
+				tomatoes,
+				rests,
+				cycles,
+				status: 0,
+			});
+			myWorker.onmessage = (e) => {
+				if (e.data.isPlayed != undefined) {
+					if (e.data.isPlayed) {
+						audio = new Audio("../public/resource/forest.mp4"); //之后写一个路径检查，防止音乐文件不存在
+						audio.onerror = function () {
+							notification(
+								"音乐文件播放失败，检查路径以及文件是否损坏。"
+							);
+						};
+						audio.play();
+					} else {
+						audio.pause();
+						audio.currentTime = 0;
+					}
+				}
+				if (e.data.status == TERMINATE) {
+					isStarted = 1;
+					sendIsStarted(isStarted);
+					minutes = 0;
+					seconds = 0;
+					myWorker.terminate();
+					audio.pause();
+					audio.currentTime = 0;
+					runningTitle = "";
+				} else if (e.data.status == RUNNING) {
+					let remain_seconds = e.data.remain_seconds;
+					if (e.data.running_status == RUNNING_STATUS.TOMATO) {
+						runningTitle = "正在专注";
+					} else if (e.data.running_status == RUNNING_STATUS.REST) {
+						runningTitle = "正在休息";
+					}
+					minutes = Math.floor(remain_seconds / 60);
+					seconds = Math.floor(remain_seconds % 60);
+				} else if (e.data.status == NOTIFICATION) {
+					notification(e.data.notification.message);
+				}
+			};
+		} else {
+			isStarted = 1;
+			sendIsStarted(isStarted);
+			myWorker.terminate();
 			minutes = 0;
 			seconds = 0;
-			isStarted = 1;
-			console.log(new Date().toLocaleString());
-			return;
+			runningTitle = "";
+			audio.pause();
+			audio.currentTime = 0;
 		}
-		seconds = parseInt((remain_seconds % 60) + "");
-		minutes = parseInt(remain_seconds / 60 + "");
-		timeId = setTimeout(() => {
-			countDown();
-		}, 100);
 	}
 
 	async function checkAndSave() {
-		if (!isValid(tomatoes) || !isValid(rests) || !isValid(cycles)) {
-			console.log("number not valid");
+		if (
+			!isValid(tomatoes, 1, 240) ||
+			!isValid(rests, 0, 240) ||
+			!isValid(cycles, 1, 100)
+		) {
 			let obj = await getCookie();
 			if (obj.length == 0) {
-				tomatoes = "0";
+				tomatoes = "1";
 				rests = "0";
-				cycles = "0";
-				setCookie({ tomatoes, rests, cycles });
+				cycles = "1";
+				setCookie({
+					tomatoes,
+					rests,
+					cycles,
+					audio_paths: [],
+					audio_path: "",
+				});
 			} else {
 				obj = JSON.parse(obj[0].value);
 				tomatoes = obj.tomatoes;
 				cycles = obj.cycles;
 				rests = obj.rests;
+				audio_paths = obj.audio_paths;
+				audio_path = obj.audio_path;
 			}
 		} else {
-			console.log("number all valid");
 			tomatoes = parseInt(tomatoes).toString();
 			rests = parseInt(rests).toString();
 			cycles = parseInt(cycles).toString();
@@ -86,9 +133,9 @@
 
 <main>
 	<div>
-		<Panel {minutes} {seconds} />
+		<Panel {minutes} {seconds} {runningTitle} />
 	</div>
-	<div>
+	<div style="display: flex;">
 		<table>
 			<tbody>
 				<tr>
@@ -96,7 +143,7 @@
 					<div>当前第x个/总共y个</div>
 				</tr>
 				<tr>
-					<div style="display: inline">
+					<div style="display: inline;flex:auto">
 						<span>番茄</span>
 						<input
 							bind:value={tomatoes}
@@ -107,7 +154,7 @@
 							placeholder="x"
 						/><span>分钟;</span>
 					</div>
-					<div style="display: inline">
+					<div style="display: inline; flex:auto">
 						<span>休息</span>
 						<input
 							bind:value={rests}
@@ -116,18 +163,22 @@
 							placeholder="x"
 						/><span>分钟</span>
 					</div>
-					<div style="display: inline">
+					<div style="display: inline; flex:auto">
 						<span>循环</span>
 						<input
 							bind:value={cycles}
 							on:change={checkAndSave}
 							type="text"
 							placeholder="x"
-						/><span>分钟</span>
+						/><span>次</span>
 					</div>
 				</tr>
 				<tr>
+					<select bind:value={audio}>
+						<option />
+					</select>
 					<div><a href="#">点击选择提示音</a></div>
+					<div><a>清除自定义音乐</a></div>
 				</tr>
 			</tbody>
 		</table>

@@ -1,14 +1,15 @@
 
-function isValid(num) {
-    return isNumeric(num) && isInRange(num)
+function isValid(num, min, max) {
+    return isNumeric(num) && isInRange(num, min, max)
 }
 
 function isNumeric(num) {
     if (typeof (num) != 'string') return false;
     return num.trim() != '' && !isNaN(num)
 }
-function isInRange(num) {
-    if (num >= 0 && num <= 240) {
+function isInRange(num, min, max) {
+    num = parseInt(num)
+    if (num >= min && num <= max) {
         return true;
     } else {
         return false;
@@ -18,9 +19,15 @@ function isInRange(num) {
 function setCookie(obj) {
     window.mainAPI.setCookie(obj)
 }
+function notification(message) {
+    window.mainAPI.notification(message)
+}
 
 async function getCookie() {
     let cookie = await window.mainAPI.getCookie()
     return cookie
 }
-export { isNumeric, isValid, isInRange, setCookie, getCookie }
+function sendIsStarted(message) {
+    window.mainAPI.sendIsStarted(message);
+}
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted }
