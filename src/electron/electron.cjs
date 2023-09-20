@@ -13,12 +13,15 @@ const createWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
         },
-        icon: path.join(__dirname, "../public/resource/tomato.png")
+        icon: path.join(__dirname, "../../public/resource/tomato.png")
     });
     if (isDev) {
         win.webContents.openDevTools();
+        win.loadURL('http://localhost:5173/')
+        console.log("is dev")
+    } else {
+        win.loadFile(path.join(__dirname, '../index.html'))
     }
-    win.loadFile(path.join(__dirname, '../public/index.html'))
     win.on('close', (event) => {
         if (isStarted == 0) {
             event.preventDefault();
@@ -26,7 +29,7 @@ const createWindow = () => {
         }
     })
 
-    tray = new Tray(path.join(__dirname, "../public/resource/tomato.png"));
+    tray = new Tray(path.join(__dirname, "../../public/resource/tomato.png"));
     // tray = new Tray("../public/Tomato.svg"));
     tray.setToolTip("tomato")
     const contextMenu = Menu.buildFromTemplate([
