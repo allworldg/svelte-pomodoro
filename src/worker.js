@@ -16,7 +16,7 @@ let timer;
 onmessage = (e) => {
     let data = e.data;
     timer = new Timer(parseInt(data.tomatoes), parseInt(data.rests), parseInt(data.cycles))
-    isInit = false;
+    // isInit = false;
     timer.start();
 }
 

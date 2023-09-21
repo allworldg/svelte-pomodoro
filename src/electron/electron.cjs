@@ -18,9 +18,8 @@ const createWindow = () => {
     if (isDev) {
         win.webContents.openDevTools();
         win.loadURL('http://localhost:5173/')
-        console.log("is dev")
     } else {
-        win.loadFile(path.join(__dirname, '../index.html'))
+        win.loadFile(path.join(__dirname, '../../dist/index.html'))
     }
     win.on('close', (event) => {
         if (isStarted == 0) {

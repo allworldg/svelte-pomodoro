@@ -11,6 +11,6 @@ export default defineConfig({
             "@": path.resolve('src')
         },
     },
-    // base: './',
+    base: './',
     root: path.resolve(process.cwd())
 })
