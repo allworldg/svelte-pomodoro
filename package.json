@@ -16,7 +16,9 @@
   },
   "build": {
     "appId": "tomato",
+    "productName": "tomato",
     "win": {
+      "icon": "build/Tomato-256.ico",
       "target": [
         {
           "target": "nsis"

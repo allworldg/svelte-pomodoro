@@ -43,7 +43,12 @@
 			myWorker.onmessage = (e) => {
 				if (e.data.isPlayed != undefined) {
 					if (e.data.isPlayed) {
-						audio = new Audio("../public/resource/forest.mp4"); //之后写一个路径检查，防止音乐文件不存在
+						audio = new Audio(
+							new URL(
+								"../public/resource/forest.mp4",
+								import.meta.url
+							)
+						); //之后写一个路径检查，防止音乐文件不存在
 						audio.onerror = function () {
 							notification(
 								"音乐文件播放失败，检查路径以及文件是否损坏。"
