@@ -48,7 +48,7 @@
 								"../public/resource/forest.mp4",
 								import.meta.url
 							)
-						); //之后写一个路径检查，防止音乐文件不存在
+						);
 						audio.onerror = function () {
 							notification(
 								"音乐文件播放失败，检查路径以及文件是否损坏。"
@@ -56,8 +56,10 @@
 						};
 						audio.play();
 					} else {
-						audio.pause();
-						audio.currentTime = 0;
+						if (audio.played) {
+							audio.pause();
+							audio.currentTime = 0;
+						}
 					}
 				}
 				if (e.data.status == TERMINATE) {
@@ -66,7 +68,9 @@
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
-					audio.pause();
+					if (audio.played) {
+						audio.pause();
+					}
 					audio.currentTime = 0;
 					runningTitle = "";
 				} else if (e.data.status == RUNNING) {
@@ -89,7 +93,9 @@
 			minutes = 0;
 			seconds = 0;
 			runningTitle = "";
-			audio.pause();
+			if (audio.played) {
+				audio.pause();
+			}
 			audio.currentTime = 0;
 		}
 	}

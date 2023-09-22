@@ -39,7 +39,7 @@ class Timer {
         }
         if (remain_time <= 0) {
             this.stop();
-            if (this.status == RUNNING_STATUS.TOMATO) {
+            if (this.status == RUNNING_STATUS.REST) {
                 this.cycles--;
             }
             this.notification();
