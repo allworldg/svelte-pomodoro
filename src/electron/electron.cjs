@@ -1,6 +1,8 @@
-const { app, BrowserWindow, ipcMain, session, Notification, Tray, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, session, Notification, Tray, Menu, dialog } = require('electron')
 const path = require('path')
-const isDev = !app.isPackaged
+const isDev = app.isPackaged
+const DEFAULT_AUDIO_PATH = path.join(__dirname, "../../public/resource/forest.mp4")
+const DEFAULT_AUDIO_NAME = "Forest"
 let tray;
 let win
 let isStarted = 1;
@@ -44,6 +46,7 @@ const createWindow = () => {
 }
 
 function setCookie(obj) {
+
     session.defaultSession.cookies.set({
         url: 'http://localhost',
         name: 'myTime',
@@ -64,12 +67,27 @@ function getCookie() {
         console.log(err)
     })
 }
+function init() {
+    setCookie({
+        tomatoes: '1',
+        rests: '0',
+        cycles: '1',
+        audios: [
+            { name: "无", path: "" },
+            { name: DEFAULT_AUDIO_NAME, path: DEFAULT_AUDIO_PATH }
+        ],
+        cur_audio: { name: "无", path: "" },
+    })
+}
 
 app.whenReady().then(() => {
     createWindow()
+    // dialog.showOpenDialog().then((res)=>{
+    //     console.log(res)
+    // })
     getCookie().then(cookie => {
         if (cookie.length == 0) {
-            setCookie({ 'tomatoes': '1', 'rests': '0', 'cycles': '1', 'audio_paths': [], 'audio_path': {} })
+            init();
         }
     })
     app.on('activate', () => {
@@ -85,6 +103,11 @@ app.whenReady().then(() => {
     ipcMain.on('set-isStarted', (e, message) => {
         isStarted = message;
     })
+    ipcMain.handle('init', (() => {
+        init();
+        return getCookie();
+    }))
+
 })
 app.on('window-all-closed', () => {
     app.quit()

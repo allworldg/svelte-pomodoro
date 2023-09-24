@@ -6,20 +6,21 @@
 		getCookie,
 		notification,
 		sendIsStarted,
+		init,
 	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
 	let rests = "0";
 	let cycles = "1";
+	let curCycles = 1;
 	let minutes = 0;
 	let seconds = 0;
 	let isStarted = 1;
 	let myWorker;
 	let runningTitle = "";
 	let audio = new Audio();
-	let audio_paths = [];
-	let audio_path = "";
-	let audio_name = "";
+	let cur_audio = {};
+	let audios = [];
 	const RUNNING = 0;
 	const TERMINATE = 1;
 	const NOTIFICATION = 2;
@@ -30,6 +31,7 @@
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
 
 	function startOrStop() {
+		new Audio(cur_audio.path).play();
 		if (isStarted == 1) {
 			isStarted = 0;
 			sendIsStarted(isStarted);
@@ -43,18 +45,15 @@
 			myWorker.onmessage = (e) => {
 				if (e.data.isPlayed != undefined) {
 					if (e.data.isPlayed) {
-						audio = new Audio(
-							new URL(
-								"../public/resource/forest.mp4",
-								import.meta.url
-							)
-						);
-						audio.onerror = function () {
-							notification(
-								"音乐文件播放失败，检查路径以及文件是否损坏。"
-							);
-						};
-						audio.play();
+						if (cur_audio.path != "") {
+							audio = new Audio(new URL(cur_audio.path));
+							audio.onerror = function () {
+								notification(
+									"音乐文件播放失败，检查路径以及文件是否损坏。"
+								);
+							};
+							audio.play();
+						}
 					} else {
 						if (audio.played) {
 							audio.pause();
@@ -82,6 +81,7 @@
 					}
 					minutes = Math.floor(remain_seconds / 60);
 					seconds = Math.floor(remain_seconds % 60);
+					curCycles = e.data.curCycles;
 				} else if (e.data.status == NOTIFICATION) {
 					notification(e.data.notification.message);
 				}
@@ -108,29 +108,19 @@
 		) {
 			let obj = await getCookie();
 			if (obj.length == 0) {
-				tomatoes = "1";
-				rests = "0";
-				cycles = "1";
-				setCookie({
-					tomatoes,
-					rests,
-					cycles,
-					audio_paths: [],
-					audio_path: "",
-				});
-			} else {
-				obj = JSON.parse(obj[0].value);
-				tomatoes = obj.tomatoes;
-				cycles = obj.cycles;
-				rests = obj.rests;
-				audio_paths = obj.audio_paths;
-				audio_path = obj.audio_path;
+				obj = await init();
 			}
+			obj = JSON.parse(obj[0].value);
+			tomatoes = obj.tomatoes;
+			cycles = obj.cycles;
+			rests = obj.rests;
+			audios = obj.audios;
+			cur_audio = obj.cur_audio;
 		} else {
 			tomatoes = parseInt(tomatoes).toString();
 			rests = parseInt(rests).toString();
 			cycles = parseInt(cycles).toString();
-			setCookie({ tomatoes, rests, cycles });
+			setCookie({ tomatoes, rests, cycles, audios, cur_audio });
 		}
 	}
 	onMount(async () => {
@@ -139,6 +129,8 @@
 		tomatoes = obj.tomatoes;
 		rests = obj.rests;
 		cycles = obj.cycles;
+		cur_audio = obj.cur_audio;
+		audios = obj.audios;
 	});
 </script>
 
@@ -151,8 +143,12 @@
 			<tbody>
 				<tr>
 					<button on:click={startOrStop}>{btn_name}</button>
-					<div>当前第x个/总共y个</div>
 				</tr>
+				{#if isStarted == 0}
+					<tr>
+						<div>当前第{curCycles}个/总共{cycles}个</div>
+					</tr>
+				{/if}
 				<tr>
 					<div style="display: inline;flex:auto">
 						<span>番茄</span>
@@ -185,11 +181,25 @@
 					</div>
 				</tr>
 				<tr>
-					<select bind:value={audio}>
-						<option />
+					<select
+						bind:value={cur_audio.path}
+						on:change={(event) => {
+							let option = event.target.value;
+							cur_audio = audios.find(
+								(audio) => audio.path == option
+							);
+						}}
+					>
+						{#each audios as audio}
+							<option value={audio.path}>
+								{audio.name}
+							</option>
+						{/each}
 					</select>
-					<div><a href="#">点击选择提示音</a></div>
-					<div><a>清除自定义音乐</a></div>
+					<div>
+						<a href="javascript:void(0)">点击选择提示音</a>
+					</div>
+					<div><button /></div>
 				</tr>
 			</tbody>
 		</table>

@@ -27,6 +27,7 @@ class Timer {
         this.tomatoes = tomatoes;
         this.rests = rests;
         this.cycles = cycles;
+        this.curCycles = 1;
         this.target_time = undefined;
     }
     main_process() {
@@ -41,11 +42,12 @@ class Timer {
             this.stop();
             if (this.status == RUNNING_STATUS.REST) {
                 this.cycles--;
+                this.curCycles++;
             }
             this.notification();
 
             if (this.status == RUNNING_STATUS.REST && this.cycles == 0) {
-                self.postMessage({ "remain_seconds": 0, 'status': TERMINATE });
+                self.postMessage({ remain_seconds: 0, status: TERMINATE });
                 return;
             }
             this.status = this.status == RUNNING_STATUS.TOMATO ? RUNNING_STATUS.REST : RUNNING_STATUS.TOMATO;
@@ -94,6 +96,6 @@ class Timer {
         }
     }
     sendTime(remain_seconds) {
-        postMessage({ "remain_seconds": remain_seconds, status: RUNNING, running_status: this.status })
+        postMessage({ remain_seconds: remain_seconds, status: RUNNING, running_status: this.status, curCycles: this.curCycles })
     }
 }
