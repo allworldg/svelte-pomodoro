@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, session, Notification, Tray, Menu, dialog }
 const path = require('path')
 const isDev = app.isPackaged
 const DEFAULT_AUDIO_PATH = path.join(__dirname, "../../public/resource/forest.mp4")
-const DEFAULT_AUDIO_NAME = "Forest"
+const DEFAULT_AUDIO_NAME = "forest"
 let tray;
 let win
 let isStarted = 1;
@@ -81,15 +81,16 @@ function init() {
 }
 
 app.whenReady().then(() => {
+
     createWindow()
-    // dialog.showOpenDialog().then((res)=>{
-    //     console.log(res)
-    // })
     getCookie().then(cookie => {
         if (cookie.length == 0) {
             init();
         }
     })
+    // dialog.showOpenDialog().then((res)=>{
+    //     console.log(res)
+    // })
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
@@ -99,14 +100,17 @@ app.whenReady().then(() => {
     ipcMain.on('notification', (e, message) => {
         new Notification({ title: "no title", body: message }).show()
     })
-    ipcMain.handle('get-cookie', getCookie)
+    ipcMain.handle('get-cookie', async () => {
+        let cookie = await getCookie()
+        if (cookie.length == 0) {
+            init();
+        }
+        cookie = await getCookie();
+        return cookie;
+    })
     ipcMain.on('set-isStarted', (e, message) => {
         isStarted = message;
     })
-    ipcMain.handle('init', (() => {
-        init();
-        return getCookie();
-    }))
 
 })
 app.on('window-all-closed', () => {

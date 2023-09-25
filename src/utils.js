@@ -30,7 +30,4 @@ async function getCookie() {
 function sendIsStarted(message) {
     window.mainAPI.sendIsStarted(message);
 }
-async function init() {
-    return await window.mainAPI.init();
-}
-export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted, init }
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted }

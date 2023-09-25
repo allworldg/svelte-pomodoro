@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:web\" \"npm run dev:electron\" ",
+    "dev:local": "vite build && npm run dev:electron",
     "dev:web": "vite",
     "dev:electron": "electron .",
     "package": "vite build && electron-builder"

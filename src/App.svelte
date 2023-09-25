@@ -6,7 +6,6 @@
 		getCookie,
 		notification,
 		sendIsStarted,
-		init,
 	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
@@ -29,9 +28,9 @@
 		REST: 2,
 	};
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
+	$: console.log(audios);
 
 	function startOrStop() {
-		new Audio(cur_audio.path).play();
 		if (isStarted == 1) {
 			isStarted = 0;
 			sendIsStarted(isStarted);
@@ -107,9 +106,6 @@
 			!isValid(cycles, 1, 100)
 		) {
 			let obj = await getCookie();
-			if (obj.length == 0) {
-				obj = await init();
-			}
 			obj = JSON.parse(obj[0].value);
 			tomatoes = obj.tomatoes;
 			cycles = obj.cycles;
@@ -188,6 +184,13 @@
 							cur_audio = audios.find(
 								(audio) => audio.path == option
 							);
+							setCookie({
+								tomatoes,
+								rests,
+								cycles,
+								audios,
+								cur_audio,
+							});
 						}}
 					>
 						{#each audios as audio}
