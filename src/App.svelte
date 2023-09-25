@@ -28,7 +28,6 @@
 		REST: 2,
 	};
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
-	$: console.log(audios);
 
 	function startOrStop() {
 		if (isStarted == 1) {
@@ -119,6 +118,20 @@
 			setCookie({ tomatoes, rests, cycles, audios, cur_audio });
 		}
 	}
+	function handleSelect(event) {
+		let path = event.target.value;
+		let result = audios.find((e) => {
+			return e.path == path;
+		});
+		cur_audio = result;
+		setCookie({
+			tomatoes,
+			rests,
+			cycles,
+			audios,
+			cur_audio
+		});
+	}
 	onMount(async () => {
 		let obj = await getCookie();
 		obj = JSON.parse(obj[0].value);
@@ -177,22 +190,7 @@
 					</div>
 				</tr>
 				<tr>
-					<select
-						bind:value={cur_audio.path}
-						on:change={(event) => {
-							let option = event.target.value;
-							cur_audio = audios.find(
-								(audio) => audio.path == option
-							);
-							setCookie({
-								tomatoes,
-								rests,
-								cycles,
-								audios,
-								cur_audio,
-							});
-						}}
-					>
+					<select value={cur_audio.path} on:change={handleSelect}>
 						{#each audios as audio}
 							<option value={audio.path}>
 								{audio.name}
