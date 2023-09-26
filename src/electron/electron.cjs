@@ -81,16 +81,12 @@ function init() {
 }
 
 app.whenReady().then(() => {
-
     createWindow()
     getCookie().then(cookie => {
         if (cookie.length == 0) {
             init();
         }
     })
-    // dialog.showOpenDialog().then((res)=>{
-    //     console.log(res)
-    // })
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
@@ -110,6 +106,13 @@ app.whenReady().then(() => {
     })
     ipcMain.on('set-isStarted', (e, message) => {
         isStarted = message;
+    })
+    ipcMain.handle('choose-file', async () => {
+        let file = await dialog.showOpenDialog()
+        if (!file.canceled) {
+            let obj = { name: path.basename(file.filePaths[0]), path: file.filePaths[0] }
+            return obj;
+        }
     })
 
 })

@@ -34,8 +34,10 @@ class Timer {
         let remain_time = this.getRemainTime();
         if (remain_time <= 10000) {//10000ms = 10s
             if (isFirstAudio) {
-                self.postMessage({ isPlayed: true })
-                isFirstAudio = false;
+                if (this.status == RUNNING_STATUS.TOMATO || (this.status == RUNNING_STATUS.REST && this.rests > 0)) {
+                    self.postMessage({ isPlayed: true })
+                    isFirstAudio = false;
+                }
             }
         }
         if (remain_time <= 0) {

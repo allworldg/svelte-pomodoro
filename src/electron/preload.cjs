@@ -8,7 +8,7 @@ contextBridge.exposeInMainWorld('mainAPI', {
     sendIsStarted: (isStarted) => {
         ipcRenderer.send('set-isStarted', isStarted)
     },
-    init: () => {
-        return ipcRenderer.invoke('init')
+    chooseFile: () => {
+        return ipcRenderer.invoke('choose-file')
     }
 })

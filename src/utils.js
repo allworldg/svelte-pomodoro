@@ -30,4 +30,9 @@ async function getCookie() {
 function sendIsStarted(message) {
     window.mainAPI.sendIsStarted(message);
 }
-export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted }
+
+async function chooseFile() {
+    let file = await window.mainAPI.chooseFile();
+    return file;
+}
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted,chooseFile }

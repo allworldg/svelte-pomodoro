@@ -6,6 +6,7 @@
 		getCookie,
 		notification,
 		sendIsStarted,
+		chooseFile,
 	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
@@ -28,7 +29,6 @@
 		REST: 2,
 	};
 	$: btn_name = isStarted == 1 ? "开始" : "停止";
-
 	function startOrStop() {
 		if (isStarted == 1) {
 			isStarted = 0;
@@ -50,10 +50,11 @@
 									"音乐文件播放失败，检查路径以及文件是否损坏。"
 								);
 							};
+							console.log("do it")
 							audio.play();
 						}
 					} else {
-						if (audio.played) {
+						if (audio.pause == false) {
 							audio.pause();
 							audio.currentTime = 0;
 						}
@@ -65,7 +66,7 @@
 					minutes = 0;
 					seconds = 0;
 					myWorker.terminate();
-					if (audio.played) {
+					if (audio.paused == false) {
 						audio.pause();
 					}
 					audio.currentTime = 0;
@@ -91,7 +92,7 @@
 			minutes = 0;
 			seconds = 0;
 			runningTitle = "";
-			if (audio.played) {
+			if (audio.paused == false) {
 				audio.pause();
 			}
 			audio.currentTime = 0;
@@ -129,8 +130,17 @@
 			rests,
 			cycles,
 			audios,
-			cur_audio
+			cur_audio,
 		});
+	}
+	async function addLocalMusic() {
+		let file = await chooseFile();
+		if (file != null) {
+			audios.push({ name: file.name, path: file.path });
+		}
+		audios = audios.slice();
+		cur_audio = file;
+		setCookie({ tomatoes, rests, cycles, audios, cur_audio });
 	}
 	onMount(async () => {
 		let obj = await getCookie();
@@ -190,17 +200,31 @@
 					</div>
 				</tr>
 				<tr>
-					<select value={cur_audio.path} on:change={handleSelect}>
+					<select
+						style="white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						max-width: 100px;"
+						value={cur_audio.path}
+						on:change={handleSelect}
+					>
 						{#each audios as audio}
-							<option value={audio.path}>
+							<option
+								style="white-space: nowrap;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								max-width: 100px;"
+								value={audio.path}
+							>
 								{audio.name}
 							</option>
 						{/each}
 					</select>
 					<div>
-						<a href="javascript:void(0)">点击选择提示音</a>
+						<a href="javascript:void(0)" on:click={addLocalMusic}
+							>点击选择提示音</a
+						>
 					</div>
-					<div><button /></div>
 				</tr>
 			</tbody>
 		</table>
