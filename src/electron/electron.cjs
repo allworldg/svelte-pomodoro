@@ -6,6 +6,10 @@ const DEFAULT_AUDIO_NAME = "forest"
 let tray;
 let win
 let isStarted = 1;
+let defaultAudios = [
+    { name: "无", path: "" },
+    { name: DEFAULT_AUDIO_NAME, path: DEFAULT_AUDIO_PATH }
+]
 app.disableHardwareAcceleration()
 
 const createWindow = () => {
@@ -72,10 +76,7 @@ function init() {
         tomatoes: '1',
         rests: '0',
         cycles: '1',
-        audios: [
-            { name: "无", path: "" },
-            { name: DEFAULT_AUDIO_NAME, path: DEFAULT_AUDIO_PATH }
-        ],
+        audios: defaultAudios,
         cur_audio: { name: "无", path: "" },
     })
 }
@@ -114,8 +115,11 @@ app.whenReady().then(() => {
             return obj;
         }
     })
-
-})
-app.on('window-all-closed', () => {
-    app.quit()
+    ipcMain.handle('get-default-audios', async() => {
+        return defaultAudios;
+    }
+    )
+    app.on('window-all-closed', () => {
+        app.quit()
+    })
 })

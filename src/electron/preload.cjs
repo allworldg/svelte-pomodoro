@@ -10,5 +10,8 @@ contextBridge.exposeInMainWorld('mainAPI', {
     },
     chooseFile: () => {
         return ipcRenderer.invoke('choose-file')
+    },
+    getDefaultAudios: () => {
+        return ipcRenderer.invoke('get-default-audios')
     }
 })

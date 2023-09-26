@@ -30,9 +30,12 @@ async function getCookie() {
 function sendIsStarted(message) {
     window.mainAPI.sendIsStarted(message);
 }
+async function getDefaultAudios(){
+    return await window.mainAPI.getDefaultAudios();
+}
 
 async function chooseFile() {
     let file = await window.mainAPI.chooseFile();
     return file;
 }
-export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted,chooseFile }
+export { isNumeric, isValid, isInRange, setCookie, getCookie, notification, sendIsStarted,chooseFile ,getDefaultAudios}

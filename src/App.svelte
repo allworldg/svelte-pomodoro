@@ -7,6 +7,7 @@
 		notification,
 		sendIsStarted,
 		chooseFile,
+		getDefaultAudios,
 	} from "./utils.js";
 	import { onMount } from "svelte";
 	let tomatoes = "1";
@@ -50,7 +51,7 @@
 									"音乐文件播放失败，检查路径以及文件是否损坏。"
 								);
 							};
-							console.log("do it")
+							console.log("do it");
 							audio.play();
 						}
 					} else {
@@ -142,6 +143,14 @@
 		cur_audio = file;
 		setCookie({ tomatoes, rests, cycles, audios, cur_audio });
 	}
+
+	async function cleanMusic() {
+		audios = await getDefaultAudios();
+		cur_audio = audios[0];
+		console.log("do it");
+		console.log(audios);
+		setCookie({ tomatoes, rests, cycles, audios, cur_audio });
+	}
 	onMount(async () => {
 		let obj = await getCookie();
 		obj = JSON.parse(obj[0].value);
@@ -224,6 +233,11 @@
 						<a href="javascript:void(0)" on:click={addLocalMusic}
 							>点击选择提示音</a
 						>
+					</div>
+					<div>
+						<a href="javascript:void(0)" on:click={cleanMusic}>
+							清理自定义音乐
+						</a>
 					</div>
 				</tr>
 			</tbody>
