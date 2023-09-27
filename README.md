@@ -4,6 +4,8 @@
 ## 技术栈
 Electron+Svelte。Svelte基础语法糖比较简单，上手很容易。
 
+![show.png](https://github.com/allworldg/tomato/blob/master/show.png)
+
 ## 功能
 1. 自定义单个番茄时长、休息间隔时长、以及循环次数。同时可以自定义音乐提醒。
 2. 消息提醒：番茄和休息结束前10s有提示声，同时在番茄和休息结束时有系统通知。
