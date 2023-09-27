@@ -51,11 +51,10 @@
 									"音乐文件播放失败，检查路径以及文件是否损坏。"
 								);
 							};
-							console.log("do it");
 							audio.play();
 						}
 					} else {
-						if (audio.pause == false) {
+						if (audio.paused == false) {
 							audio.pause();
 							audio.currentTime = 0;
 						}
@@ -147,8 +146,6 @@
 	async function cleanMusic() {
 		audios = await getDefaultAudios();
 		cur_audio = audios[0];
-		console.log("do it");
-		console.log(audios);
 		setCookie({ tomatoes, rests, cycles, audios, cur_audio });
 	}
 	onMount(async () => {
@@ -163,23 +160,25 @@
 </script>
 
 <main>
-	<div>
+	<div style="text-align:center">
 		<Panel {minutes} {seconds} {runningTitle} />
 	</div>
-	<div style="display: flex;">
+	<div style="display: flex; justify-content: center;">
 		<table>
 			<tbody>
-				<tr>
+				<tr style="text-align:center">
 					<button on:click={startOrStop}>{btn_name}</button>
 				</tr>
 				{#if isStarted == 0}
 					<tr>
-						<div>当前第{curCycles}个/总共{cycles}个</div>
+						<div style="font-size: 20px; text-align:center">
+							当前第{curCycles}个/总共{cycles}个
+						</div>
 					</tr>
 				{/if}
 				<tr>
-					<div style="display: inline;flex:auto">
-						<span>番茄</span>
+					<div style="display: inline;flex:auto;margin:10px">
+						<span style="margin-right:2px">番茄</span>
 						<input
 							bind:value={tomatoes}
 							on:change={checkAndSave}
@@ -187,10 +186,10 @@
 							min="0"
 							max="10"
 							placeholder="x"
-						/><span>分钟;</span>
+						/><span>分钟</span>
 					</div>
-					<div style="display: inline; flex:auto">
-						<span>休息</span>
+					<div style="display: inline; flex:auto;margin:10px">
+						<span style="margin-right:2px">休息</span>
 						<input
 							bind:value={rests}
 							on:change={checkAndSave}
@@ -198,7 +197,7 @@
 							placeholder="x"
 						/><span>分钟</span>
 					</div>
-					<div style="display: inline; flex:auto">
+					<div style="display: inline; flex:auto; margin:10px">
 						<span>循环</span>
 						<input
 							bind:value={cycles}
@@ -213,7 +212,8 @@
 						style="white-space: nowrap;
 						overflow: hidden;
 						text-overflow: ellipsis;
-						max-width: 100px;"
+						width: 100px;
+						margin-left:10px"
 						value={cur_audio.path}
 						on:change={handleSelect}
 					>
@@ -222,19 +222,19 @@
 								style="white-space: nowrap;
 								overflow: hidden;
 								text-overflow: ellipsis;
-								max-width: 100px;"
+								"
 								value={audio.path}
 							>
 								{audio.name}
 							</option>
 						{/each}
 					</select>
-					<div>
+					<div style="margin-left:10px">
 						<a href="javascript:void(0)" on:click={addLocalMusic}
 							>点击选择提示音</a
 						>
 					</div>
-					<div>
+					<div style="margin-left:10px">
 						<a href="javascript:void(0)" on:click={cleanMusic}>
 							清理自定义音乐
 						</a>
@@ -244,3 +244,14 @@
 		</table>
 	</div>
 </main>
+
+<style>
+	span {
+		font-size: 18px;
+	}
+	input {
+		text-align: center;
+		max-width: 30px;
+		margin-right:10px;
+	}
+</style>
