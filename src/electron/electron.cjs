@@ -41,10 +41,10 @@ const createWindow = () => {
     // tray = new Tray("../public/Tomato.svg"));
     tray.setToolTip("tomato")
     const contextMenu = Menu.buildFromTemplate([
-        { label: 'Item1', type: 'radio' },
-        { label: 'Item2', type: 'radio' },
-        { label: 'Item3', type: 'radio', checked: true },
-        { label: 'Item4', type: 'radio' }
+        { label: '退出',click:()=>{
+            isStarted = 1;
+            app.quit();
+        } },
     ])
     tray.setContextMenu(contextMenu)
     tray.on('click', () => {
@@ -113,7 +113,7 @@ if (!gotTheLock) {
             setCookie(cookie)
         })
         ipcMain.on('notification', (e, message) => {
-            new Notification({ title: "no title", body: message }).show()
+            new Notification({ title: "通知", body: message }).show()
         })
         ipcMain.handle('get-cookie', async () => {
             let cookie = await getCookie()
