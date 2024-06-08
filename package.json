@@ -1,5 +1,5 @@
 {
-  "name": "tomato",
+  "name": "pomodoro",
   "description": "none",
   "author": {
     "name": "allworldg"
@@ -16,8 +16,8 @@
     "package": "vite build && electron-builder"
   },
   "build": {
-    "appId": "tomato",
-    "productName": "tomato",
+    "appId": "pomodoro",
+    "productName": "pomodoro",
     "win": {
       "icon": "build/Tomato-256.ico",
       "target": [

@@ -8,5 +8,7 @@
 
 <main>
   <div style="text-align: center;font-size:20px">{runningTitle}</div>
-  <div><span style="font-size: 30px">{formattedMinutes} : {formattedSeconds}</span></div>
+  <div>
+    <span style="font-size: 30px">{formattedMinutes} : {formattedSeconds}</span>
+  </div>
 </main>
