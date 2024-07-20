@@ -1,3 +1,4 @@
+改用vue+vite+electron重写了。 [vue-pomodoro](https://github.com/allworldg/vue-pomodoro)
 # 极简番茄
 番茄钟app已经数不胜数了，但是它们不是太复杂，就是不太满足我自己的需求，所以我又造了个番茄钟的轮子，顺便入门学习一下electron。
 
